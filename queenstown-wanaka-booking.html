@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Checklist · Queenstown + Wānaka 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0e1a2b;--snow:#f4f7fb;--paper:#fbfcfe;--ink:#17202e;--muted:#5a6678;--line:#dde5ee;
+  --gold:#e3a44b;--coral:#d96a45;--qt:#1f7c8c;--wa:#c2813a;--good:#1f7a4d;--goodbg:#e3f3ea;--urgentbg:#fbe6e2;--urgent:#b23b2e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Schibsted Grotesk",system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.5;padding-bottom:60px}
+h1,h2{font-family:"Fraunces",Georgia,serif}
+.wrap{max-width:860px;margin:0 auto;padding:0 22px}
+header{background:var(--night);color:#fff;padding:34px 0 30px}
+header .kick{color:var(--gold);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;font-weight:600}
+header h1{font-size:clamp(1.9rem,5vw,2.8rem);font-weight:600;margin:.1em 0 .15em;line-height:1.02}
+header p{color:#c4d0dd;font-size:.95rem;max-width:60ch}
+
+.progress{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px 0}
+.progress .row{display:flex;align-items:center;gap:16px}
+.bar{flex:1;height:10px;border-radius:100px;background:var(--snow);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--qt),var(--good));transition:width .35s ease}
+.ptext{font-weight:700;font-family:"Fraunces",serif;white-space:nowrap}
+.reset{font:inherit;font-size:.8rem;color:var(--muted);background:none;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+.reset:hover{border-color:var(--muted)}
+
+section{padding:24px 0;border-bottom:1px solid var(--line)}
+.eyebrow{color:var(--coral);font-weight:600;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}
+h2{font-size:1.4rem;font-weight:600;margin:.15em 0 .5em}
+
+.item{display:flex;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;background:#fff;transition:.2s}
+.item:hover{border-color:#c4d0dd}
+.item.done{background:var(--goodbg);border-color:#bfe3cd}
+.item.done .title{text-decoration:line-through;color:var(--muted)}
+.item.done .why{color:#8aa897}
+.cb{flex-shrink:0;margin-top:2px}
+.cb input{width:24px;height:24px;accent-color:var(--good);cursor:pointer}
+.body{flex:1}
+.title{font-weight:600;font-size:1.03rem;display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.why{color:var(--muted);font-size:.9rem;margin-top:3px}
+.meta{margin-top:7px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.tag{font-size:.66rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:100px;background:var(--snow);color:var(--muted)}
+.tag.now{background:var(--urgentbg);color:var(--urgent)}
+.tag.soon{background:#fdf1dd;color:#9a6b15}
+.tag.later{background:#e7f0f2;color:#1a6675}
+.link{font-size:.84rem;color:var(--qt);text-decoration:none;font-weight:600}
+.link:hover{text-decoration:underline}
+
+.decision .item{align-items:flex-start}
+.cutoffs .item{background:#fff6f4;border-color:#f3d4cc}
+.cutoffs .when{font-family:"Fraunces",serif;font-weight:700;color:var(--urgent)}
+.locked{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.lock{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--snow)}
+.lock .l{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.lock .v{font-weight:600;margin-top:2px}
+.lock .ref{font-size:.8rem;color:var(--qt);margin-top:2px}
+.savenote{font-size:.78rem;color:var(--muted);margin-top:6px}
+footer{padding:24px 0;color:var(--muted);font-size:.82rem;text-align:center}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="kick">29 June – 9 July 2026 · what to lock in</div>
+  <h1>Booking Checklist</h1>
+  <p>Worked in priority order — the things that sell out or cap numbers come first. Tick as you go; your progress is saved on this device.</p>
+</div></header>
+
+<div class="progress"><div class="wrap"><div class="row">
+  <div class="bar"><i id="bar"></i></div>
+  <div class="ptext" id="ptext">0 / 0</div>
+  <button class="reset" id="reset">Reset</button>
+</div></div></div>
+
+<section><div class="wrap" id="booknow">
+  <div class="eyebrow">Do these · in order</div>
+  <h2>Book now</h2>
+</div></section>
+
+<section><div class="wrap decision" id="decisions">
+  <div class="eyebrow">Make the call</div>
+  <h2>Decisions</h2>
+</div></section>
+
+<section><div class="wrap cutoffs" id="cutoffs">
+  <div class="eyebrow">Don't miss</div>
+  <h2>Free-cancellation cut-offs</h2>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">Reference</div>
+  <h2>Already locked in</h2>
+  <div class="locked" id="locked"></div>
+</div></section>
+
+<footer class="wrap">Claude only plans and reads — you make the actual bookings. Prices and availability are 2026 research figures; confirm at the time of booking.</footer>
+
+<script>
+const STORE="qtwanaka_booking_v1";
+const bookNow=[
+ {id:"wa-pass",title:"Wānaka lift passes — Mon 6 + Tue 7 (+ maybe Wed 8)",why:"Cardrona/Treble Cone cap numbers and sell out in school holidays; cheap flexible passes are blacked out 6–17 Jul. Buy 2 day passes for Mon/Tue; decide separately if you want Wed covered as a bonus (a turn-up 3rd day isn't guaranteed).",tag:"This week",cls:"now",url:"https://www.cardrona.com",link:"cardrona.com / treblecone.com"},
+ {id:"onsen",title:"Onsen Hot Pools — private pool, evening",why:"Small capacity, evening slots book out. Pair with Shotover Jet at Arthurs Point on Thu 2 Jul.",tag:"This week",cls:"now",url:"https://www.onsen.co.nz",link:"onsen.co.nz"},
+ {id:"wa-dinner",title:"Wānaka dinners — the standouts",why:"Bistro Gentil (splurge) and Muttonbird book out; also Treehouse, Francesca's, arc. Lock the 1–2 you care about.",tag:"This week",cls:"now",url:"https://www.bistrogentil.co.nz",link:"bistrogentil.co.nz"},
+ {id:"ebike",title:"Arrowtown e-bike + Ayrburn lunch — Sat 4 Jul",why:"Going Blue for the bikes; book the Ayrburn precinct table for a long lunch at Lake Hayes.",tag:"1–2 weeks out",cls:"soon",url:"https://ayrburn.com",link:"goingblue.co.nz / ayrburn.com"},
+ {id:"jet",title:"Shotover Jet — family pass (Thu 2 Jul)",why:"Family pass (2A+2C) NZ$507. Same area as Onsen, so do them back-to-back.",tag:"1–2 weeks out",cls:"soon",url:"https://www.shotoverjet.com",link:"shotoverjet.com"},
+ {id:"qt-pass",title:"Queenstown lift access — Superpass or day passes",why:"NZ Superpass is flexible (either mountain, undated, swappable). Buy a few days out once the forecast firms up.",tag:"A few days out",cls:"later",url:"https://www.nzsuperpass.com",link:"nzsuperpass.com"},
+ {id:"gear",title:"Ski gear hire — both cities",why:"Two local multi-day hires (QT: Cardrona×TC Rentals or Snowbiz; Wānaka: Racers Edge or Outside Sports). Pre-book 4+ days for ~15% off and spend time on boot fitting.",tag:"A few days out",cls:"later",url:"",link:""},
+ {id:"qt-dinner",title:"Queenstown dinners",why:"Rātā and The Bunker book out; plus Rodd & Gunn (lakefront), Toast & Oak, SODA. Lock the special nights.",tag:"Closer to time",cls:"later",url:"",link:""},
+];
+const decisions=[
+ {id:"d-qt",title:"Queenstown: Superpass vs individual day passes",why:"Superpass wins on flexibility and is usually cheapest at 3 days; only skip it if you end up skiing fewer days than planned."},
+ {id:"d-wed",title:"Wānaka Wed 8: bonus ski day or lake/rest day?",why:"If you want Wed genuinely open as a 3rd ski day, sort the pass when you book (extra day or Flexi) — don't rely on a same-day walk-up in peak week."},
+ {id:"d-mtn",title:"Treble Cone vs Cardrona — leave as a morning-of call",why:"No pre-decision needed: pick the better mountain each morning on weather. One company's pass covers both its fields."},
+];
+const cutoffs=[
+ {id:"co-qt",title:"Queenstown Airbnb — free cancellation",when:"3pm, Mon 22 Jun"},
+ {id:"co-wa",title:"Wānaka Airbnb — free cancellation",when:"3pm, Sun 28 Jun"},
+ {id:"co-car",title:"Ace hire car — free cancellation",when:"07:59, Thu 3 Jul (Melbourne)"},
+];
+const locked=[
+ {l:"Flights",v:"Return MEL ⇄ QT",ref:"Booked"},
+ {l:"Queenstown stay",v:"BayCentre By The Lake",ref:"Conf HMWCMEXMMN · 29 Jun–5 Jul"},
+ {l:"Wānaka stay",v:"Little Holly House",ref:"Conf HMXRRAAJY9 · 5–9 Jul"},
+ {l:"Hire car",v:"Ace · Mitsubishi Outlander",ref:"#724745338 · 5–9 Jul"},
+ {l:"Ski plan",v:"5 days — 3 QT + 2 Wānaka",ref:"+ optional bonus Wed"},
+ {l:"Activity set",v:"Jet · Onsen · luge · e-bike",ref:"Locked"},
+];
+
+// storage (works on a hosted page; degrades gracefully elsewhere)
+let state={};
+try{ state=JSON.parse(localStorage.getItem(STORE))||{}; }catch(e){ state={}; }
+function save(){ try{ localStorage.setItem(STORE,JSON.stringify(state)); }catch(e){} }
+
+const checkItems=[...bookNow,...decisions,...cutoffs];
+function makeItem(it,sectionCls){
+ const done=!!state[it.id];
+ const d=document.createElement("div"); d.className="item"+(done?" done":"");
+ let meta="";
+ if(it.cls){ meta+=`<span class="tag ${it.cls}">${it.tag}</span>`; }
+ if(it.link){ meta+=`<a class="link" href="${it.url}" target="_blank" rel="noopener">${it.link} ↗</a>`; }
+ if(it.when){ meta=`<span class="when">${it.when}</span>`; }
+ d.innerHTML=`<div class="cb"><input type="checkbox" data-id="${it.id}" ${done?"checked":""}></div>
+   <div class="body"><div class="title">${it.title}</div><div class="why">${it.why||""}</div>${meta?`<div class="meta">${meta}</div>`:""}</div>`;
+ return d;
+}
+function render(){
+ const bn=document.getElementById("booknow"); bn.querySelectorAll(".item").forEach(n=>n.remove());
+ bookNow.forEach(it=>bn.appendChild(makeItem(it)));
+ const de=document.getElementById("decisions"); de.querySelectorAll(".item").forEach(n=>n.remove());
+ decisions.forEach(it=>de.appendChild(makeItem(it)));
+ const co=document.getElementById("cutoffs"); co.querySelectorAll(".item").forEach(n=>n.remove());
+ cutoffs.forEach(it=>co.appendChild(makeItem(it)));
+ const lk=document.getElementById("locked"); lk.innerHTML="";
+ locked.forEach(o=>{ const c=document.createElement("div"); c.className="lock";
+   c.innerHTML=`<div class="l">${o.l}</div><div class="v">${o.v}</div><div class="ref">${o.ref}</div>`; lk.appendChild(c); });
+ updateProgress();
+}
+function updateProgress(){
+ const total=checkItems.length;
+ const done=checkItems.filter(it=>state[it.id]).length;
+ document.getElementById("bar").style.width=(total?100*done/total:0)+"%";
+ document.getElementById("ptext").textContent=done+" / "+total;
+}
+document.addEventListener("change",e=>{
+ const cb=e.target.closest('input[type=checkbox][data-id]'); if(!cb) return;
+ state[cb.dataset.id]=cb.checked; save();
+ const item=cb.closest(".item"); item.classList.toggle("done",cb.checked);
+ updateProgress();
+});
+document.getElementById("reset").addEventListener("click",()=>{
+ if(confirm("Clear all ticks?")){ state={}; save(); render(); }
+});
+render();
+</script>
+</body>
+</html>

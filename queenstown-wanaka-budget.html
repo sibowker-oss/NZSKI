@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trip Budget · Queenstown + Wānaka 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0e1a2b;--night2:#16273c;--snow:#f4f7fb;--paper:#fbfcfe;--ink:#17202e;--muted:#5a6678;--line:#dde5ee;
+  --gold:#e3a44b;--coral:#d96a45;--qt:#1f7c8c;--wa:#c2813a;--good:#1f7a4d;--goodbg:#e3f3ea;--bad:#b23b2e;--badbg:#fbe6e2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Schibsted Grotesk",system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.5;padding-bottom:60px}
+h1,h2,.disp{font-family:"Fraunces",Georgia,serif}
+.wrap{max-width:920px;margin:0 auto;padding:0 22px}
+header{background:var(--night);color:#fff;padding:34px 0 30px}
+header .kick{color:var(--gold);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;font-weight:600}
+header h1{font-size:clamp(1.9rem,5vw,2.8rem);font-weight:600;margin:.1em 0 .15em;line-height:1.02}
+header p{color:#c4d0dd;font-size:.95rem}
+
+/* sticky summary */
+.summary{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px 0}
+.summary .row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.sumcell{flex:1 1 150px}
+.sumcell .l{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.sumcell .v{font-family:"Fraunces",serif;font-size:1.5rem;font-weight:600;line-height:1.05}
+.variance{border-radius:12px;padding:8px 14px;font-weight:600}
+.variance.good{background:var(--goodbg);color:var(--good)} .variance.bad{background:var(--badbg);color:var(--bad)} .variance.none{background:var(--snow);color:var(--muted)}
+
+section{padding:26px 0;border-bottom:1px solid var(--line)}
+.eyebrow{color:var(--coral);font-weight:600;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}
+h2{font-size:1.4rem;font-weight:600;margin:.2em 0 .1em}
+.note{color:var(--muted);font-size:.9rem;margin-bottom:14px}
+table{width:100%;border-collapse:collapse}
+td,th{padding:8px 6px;text-align:left;font-size:.95rem;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+input[type=number]{font:inherit;width:90px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;text-align:right;color:#0a47b3;font-weight:600;background:#f7faff}
+input[type=number].sm{width:62px}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--qt)}
+.subtotal td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none;padding-top:10px}
+.cap-input input{width:130px;font-size:1.05rem}
+.hint{font-size:.8rem;color:var(--muted)}
+.pill{display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:100px;background:var(--snow);color:var(--muted);margin-left:6px}
+.committed td{color:var(--muted)}
+footer{padding:24px 0;color:var(--muted);font-size:.82rem;text-align:center}
+@media(max-width:620px){ .sumcell .v{font-size:1.2rem} input[type=number]{width:74px} }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="kick">29 June – 9 July 2026 · family of 4</div>
+  <h1>Trip Budget</h1>
+  <p>Queenstown + Wānaka. Edit the blue cells — everything recalculates live. All figures A$ unless marked NZ$.</p>
+</div></header>
+
+<div class="summary"><div class="wrap"><div class="row">
+  <div class="sumcell"><div class="l">Total trip (A$)</div><div class="v" id="s-total">—</div></div>
+  <div class="sumcell"><div class="l">Variable (to cap)</div><div class="v" id="s-variable">—</div></div>
+  <div class="sumcell"><div class="l">Your cap</div><div class="v" id="s-cap">—</div></div>
+  <div class="variance none" id="s-var">Set a cap below</div>
+</div></div></div>
+
+<section><div class="wrap">
+  <div class="eyebrow">Settings</div>
+  <h2>The dials</h2>
+  <table>
+    <tr><td>NZD → AUD rate</td><td class="r"><input type="number" id="fx" value="0.92" step="0.01"></td></tr>
+    <tr><td>Flights (A$) <span class="pill">you enter</span></td><td class="r"><input type="number" id="flights" value="0" step="50"></td></tr>
+    <tr><td><b>Variable budget cap (A$)</b> <span class="pill">from your annual budget</span></td><td class="r cap-input"><input type="number" id="cap" value="0" step="100"></td></tr>
+  </table>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">Committed · already booked</div>
+  <h2>Locked-in costs</h2>
+  <table class="committed">
+    <tr><td>Flights</td><td class="r" id="c-flights">—</td></tr>
+    <tr><td>Accommodation — QT $3,394.81 + Wānaka $1,503.42</td><td class="r">A$4,898</td></tr>
+    <tr><td>Hire car — Ace Outlander</td><td class="r">A$528</td></tr>
+    <tr class="subtotal"><td>Subtotal committed</td><td class="r" id="c-sub">—</td></tr>
+  </table>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">Variable · skiing</div>
+  <h2>Skiing <span class="pill" id="ski-aud">—</span></h2>
+  <div class="note">5 ski days = 3 Queenstown + 2 Wānaka. Change the day counts to flex. (Per-day rates fixed below: Superpass A 105 / C 60; Cardrona-TC A 185 / C 105; hire 55/day; QT bus 35.)</div>
+  <table>
+    <tr><th>Item</th><th class="r">Days</th><th class="r">NZ$</th></tr>
+    <tr><td>Queenstown ski days (Superpass + bus + hire)</td><td class="r"><input type="number" id="qtDays" class="sm" value="3" min="0"></td><td class="r" id="ski-qt">—</td></tr>
+    <tr><td>Wānaka ski days (Cardrona/TC + hire, no bus)</td><td class="r"><input type="number" id="waDays" class="sm" value="2" min="0"></td><td class="r" id="ski-wa">—</td></tr>
+    <tr class="subtotal"><td>Skiing subtotal</td><td></td><td class="r" id="ski-nzd">—</td></tr>
+  </table>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">Variable · activities</div>
+  <h2>Activities <span class="pill" id="act-aud">—</span></h2>
+  <div class="note">Tick to include. Prices are for the group of 4 (NZ$).</div>
+  <table id="act-table">
+    <tr><th>Include</th><th>Activity</th><th class="r">NZ$ (4)</th></tr>
+  </table>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">Variable · eating out</div>
+  <h2>Eating out <span class="pill" id="eat-aud">—</span></h2>
+  <div class="note">The biggest controllable line. Dial qty and average down to hit your cap. Group of 4 unless noted (NZ$).</div>
+  <table id="eat-table">
+    <tr><th>Item</th><th class="r">Qty</th><th class="r">Avg NZ$</th><th class="r">NZ$</th></tr>
+  </table>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">Variable · other</div>
+  <table>
+    <tr><td>Local transport / misc — taxis, fuel (A$)</td><td class="r"><input type="number" id="misc" value="150" step="10"></td></tr>
+    <tr class="subtotal"><td>Variable subtotal (A$)</td><td class="r" id="v-sub">—</td></tr>
+  </table>
+</div></section>
+
+<footer class="wrap">Planning estimate only — prices are 2026 research figures and will vary. Accommodation, car and flights are committed; skiing, activities and eating out are the parts to manage.</footer>
+
+<script>
+const fmt=(n)=>"A$"+Math.round(n).toLocaleString();
+const fmtN=(n)=>"NZ$"+Math.round(n).toLocaleString();
+const ACCOM=4898.23, CAR=528;
+const SKI={spA:105,spC:60,ctA:185,ctC:105,hire:55,bus:35,fuel:15,adults:2,kids:2,hires:3};
+const activities=[
+ {id:"ebike",name:"E-bike — Going Blue, Arrowtown",price:520,on:true},
+ {id:"jet",name:"Shotover Jet — family pass",price:507,on:true},
+ {id:"onsen",name:"Onsen Hot Pools — private pool",price:236,on:true},
+ {id:"luge",name:"Skyline gondola + luge — family",price:187,on:true},
+ {id:"quad",name:"Quad biking — Off Road (4)",price:1000,on:false},
+ {id:"scenic",name:"Scenic 4WD / LOTR — Nomad",price:908,on:false},
+ {id:"tss",name:"TSS Earnslaw + Walter Peak dinner",price:540,on:false},
+ {id:"zip",name:"Ziptrek (off the gondola)",price:640,on:false},
+ {id:"puzzle",name:"Puzzling World, Wānaka",price:80,on:false},
+ {id:"gold",name:"Gold panning, Arrowtown",price:40,on:false},
+];
+const eating=[
+ {id:"groc",name:"Groceries — self-catered meals (block)",qty:1,avg:400},
+ {id:"brunch",name:"Café brunch (4)",qty:3,avg:85},
+ {id:"mtn",name:"On-mountain lunch (4) — ski days",qty:5,avg:110},
+ {id:"town",name:"Town / casual lunch (4)",qty:3,avg:75},
+ {id:"special",name:"Dinner out — special (Muttonbird/Bistro Gentil/Rātā…)",qty:2,avg:330},
+ {id:"casual",name:"Dinner out — casual (4)",qty:4,avg:140},
+ {id:"treats",name:"Coffee / treats / après (per day)",qty:10,avg:45},
+];
+// build activity rows
+const at=document.getElementById("act-table");
+activities.forEach(a=>{
+ const tr=document.createElement("tr");
+ tr.innerHTML=`<td><input type="checkbox" id="a-${a.id}" ${a.on?"checked":""}></td><td>${a.name}</td><td class="r">${a.price.toLocaleString()}</td>`;
+ at.appendChild(tr);
+});
+// build eating rows
+const et=document.getElementById("eat-table");
+eating.forEach(e=>{
+ const tr=document.createElement("tr");
+ tr.innerHTML=`<td>${e.name}</td><td class="r"><input type="number" class="sm" id="q-${e.id}" value="${e.qty}" min="0"></td><td class="r"><input type="number" class="sm" id="v-${e.id}" value="${e.avg}" step="5" min="0"></td><td class="r" id="t-${e.id}">—</td>`;
+ et.appendChild(tr);
+});
+const eatSub=document.createElement("tr"); eatSub.className="subtotal";
+eatSub.innerHTML=`<td>Eating out subtotal</td><td></td><td></td><td class="r" id="eat-nzd">—</td>`; et.appendChild(eatSub);
+
+function val(id){return parseFloat(document.getElementById(id).value)||0;}
+function recalc(){
+ const fx=val("fx");
+ // skiing
+ const qt=val("qtDays"), wa=val("waDays");
+ const skiQT=qt*(SKI.adults*SKI.spA+SKI.kids*SKI.spC)+qt*(SKI.adults+SKI.kids)*SKI.bus+SKI.hires*qt*SKI.hire;
+ const skiWA=wa*(SKI.adults*SKI.ctA+SKI.kids*SKI.ctC)+SKI.hires*wa*SKI.hire+wa*SKI.fuel;
+ const skiNZD=skiQT+skiWA;
+ document.getElementById("ski-qt").textContent=fmtN(skiQT);
+ document.getElementById("ski-wa").textContent=fmtN(skiWA);
+ document.getElementById("ski-nzd").textContent=fmtN(skiNZD);
+ document.getElementById("ski-aud").textContent=fmt(skiNZD*fx);
+ // activities
+ let actNZD=0;
+ activities.forEach(a=>{ if(document.getElementById("a-"+a.id).checked) actNZD+=a.price; });
+ document.getElementById("act-aud").textContent=fmt(actNZD*fx);
+ // eating
+ let eatNZD=0;
+ eating.forEach(e=>{ const t=val("q-"+e.id)*val("v-"+e.id); eatNZD+=t; document.getElementById("t-"+e.id).textContent=fmtN(t); });
+ document.getElementById("eat-nzd").textContent=fmtN(eatNZD);
+ document.getElementById("eat-aud").textContent=fmt(eatNZD*fx);
+ // committed
+ const flights=val("flights");
+ const committed=flights+ACCOM+CAR;
+ document.getElementById("c-flights").textContent=fmt(flights);
+ document.getElementById("c-sub").textContent=fmt(committed);
+ // variable
+ const misc=val("misc");
+ const variable=skiNZD*fx+actNZD*fx+eatNZD*fx+misc;
+ document.getElementById("v-sub").textContent=fmt(variable);
+ const total=committed+variable;
+ document.getElementById("s-total").textContent=fmt(total);
+ document.getElementById("s-variable").textContent=fmt(variable);
+ // cap + variance
+ const cap=val("cap");
+ document.getElementById("s-cap").textContent=cap>0?fmt(cap):"—";
+ const vb=document.getElementById("s-var");
+ if(cap<=0){ vb.className="variance none"; vb.textContent="Set a cap below"; }
+ else { const diff=cap-variable;
+   if(diff>=0){ vb.className="variance good"; vb.textContent="Under by "+fmt(diff); }
+   else { vb.className="variance bad"; vb.textContent="Over by "+fmt(-diff); } }
+}
+document.addEventListener("input",recalc);
+recalc();
+</script>
+</body>
+</html>
